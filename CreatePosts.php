@@ -15,7 +15,7 @@
     //Prints a suitable title string given the error message list
     function printTitle($errors) 
     {
-        if (count($errors) === 0) {
+        if (count($errors) == 0) {
             printf("Created post");
         } else {
             printf("Failed to create post");
@@ -52,11 +52,11 @@
     if ($my->connect_errno) {
         $errorMessages[] = "Couldn't connect to database";
     }
-    if (count($errorMessages) === 0) {
+    if (count($errorMessages) == 0) {
         $username = $my->escape_string($_POST["user"]);
         $post = $my->escape_string($_POST["post"]);
         $query = "INSERT INTO Posts (content, author_id) VALUES (\"{$post}\", \"{$username}\");";
-        if (!$my->query($query)) {
+        if (!$my->query($query) || $my->affected_rows == 0) {
             $errorMessages[] = "Failed to add post to database (Invalid user?)";
         }
     }
@@ -68,14 +68,9 @@
     <title>
         <?php printTitle(); ?>
     </title>
-    <style>
-        body {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
-    <h1><?php printTitle(); ?></h1>
-        <?php printErrors(); ?>
+    <h1><?php printTitle($errorMessages); ?></h1>
+        <?php printErrors($errorMessages); ?>
 </body>
 </html>
